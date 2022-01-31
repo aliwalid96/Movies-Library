@@ -11,18 +11,18 @@ const moviesData = require('./Movie Data/data.json');
 
 app.get('/',MovieHandler);
 app.get('/favorite',favoritWelcom)
-app.get('*',serverHandler)
+//app.get(serverHandler)
 app.get('*',notFoundsHandle)
 
 
-function notFoundsHandle(res,req){
+function notFoundsHandle(req,res){
     return res.status(404).send("Sorry, something went wrong ");
 }
 
 
-function serverHandler(res,req){
-return res.status(500).send("Sorry, something went wrong");
-}
+//function serverHandler(res,req){
+//return res.status(500).send("Sorry, something went wrong");
+//}
 
 function favoritWelcom(req,res){
     return res.status(200).send("Welcome to Favorite Page")
@@ -38,14 +38,11 @@ function TheMovie(title,poster_path,overview){
 }
 
  function MovieHandler(req,res){
-     let movies=[];
-     moviesData.data.map(movie =>{
-         let oneMovie=new TheMovie(movie.title,movie.poster_path,movie.overview);
-         movies.push(oneMovie);
-
-     })
-     console.log(movies);
-     return res.status(200).json(movies);
+     
+     
+   let oneMovie=new TheMovie(moviesData.title,moviesData.poster_path,moviesData.overview);
+    
+     return res.status(200).json(oneMovie);
 
  }
 
