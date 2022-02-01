@@ -31,6 +31,8 @@ function ApiMovie(id, title, release_date, poster_path, overview) {
   this.poster_path = poster_path;
   this.overview = overview;
 
+
+  
 }
 
 
