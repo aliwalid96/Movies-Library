@@ -29,36 +29,36 @@ app.post('/addMovie', jasonParser, addMovieFun)
 
 app.get('*', notFoundsHandle);
 
-// function deleteMovi(req,res){
-//   const id = req.params.id;
-//   const sql = `DELETE FROM moviesTable WHERE id=${id};` 
+function deleteMovi(req,res){
+  const id = req.params.id;
+  const sql = `DELETE FROM moviesTable WHERE id=${id};` 
   
 
-//   client.query(sql).then(()=>{
-//       res.status(200).send("The Movie has been deleted");
-//   }).catch(error=>{
-//     serverHandler(error,req,res)
-//   });
+  client.query(sql).then(()=>{
+      res.status(200).send("The Movie has been deleted");
+  }).catch(error=>{
+    serverHandler(error,req,res)
+  });
 
-// function updateMovie(req, res) {
-//   const id = req.params.id;
-//   // console.log(req.params.name);
-//   const movie = req.body;
+function updateMovie(req, res) {
+  const id = req.params.id;
+  // console.log(req.params.name);
+  const movie = req.body;
 
-//   const sql = `UPDATE moviesTable SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
-//   let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
-//   client.query(sql, values).then(data => {
-//     res.status(200).json(data.rows);
+  const sql = `UPDATE moviesTable SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
+  let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
+  client.query(sql, values).then(data => {
+    res.status(200).json(data.rows);
 
-//   }).catch(error => {
-//     serverHandler(error, req, res);
+  }).catch(error => {
+    serverHandler(error, req, res);
 
-//   });
-
-
+  });
 
 
-// }
+
+
+}
 
 function addMovieFun(req, res) {
   console.log(req.body);
