@@ -98,6 +98,8 @@ function tredinFunction(req, res) {
 }
 
 
+
+
 function searchingFunction(req, res) {
   let theSearch = req.query.theSearch;
   let newUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=${theSearch}`
