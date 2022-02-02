@@ -27,6 +27,8 @@ app.post('/addMovie', jasonParser, addMovieFun)
 
 
 
+
+
 app.get('*', notFoundsHandle);
 
 function deleteMovi(req,res){
