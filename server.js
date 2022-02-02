@@ -8,12 +8,14 @@ require('dotenv').config();
 app.use(cors());
 
 app.use(express.json());
+  
+let parser=require('body-parser');
+let jasonParser=parser.json();
 let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}&language=en-US`;
 
 
 const moviesData = require('./Movie Data/data.json');
-
-///// endpoints ///server for food recipes 
+ 
 
 
 
@@ -23,19 +25,21 @@ app.get('/favorite', favoritWelcom)
 app.get('/trending', tredinFunction)
 app.get('/search', searchingFunction)
 app.get(serverHandler)
-app.post('/addMovie',addMovieFun)
+app.post('/addMovie',jasonParser,addMovieFun)
 //app.get('/getMovies',getMoveFun)
 
 app.get('*', notFoundsHandle);
 
 function addMovieFun(req,res){
 console.log(req.body);
-let sql=`insert into moviedata(title,release_date,poster_path,overview) values($1,$2,$3,$4) `;
-let values=[data.results.title,data.results.release_date,data.results.poster_path,data.results.overview];
+let mv=req.body;
+let sql=`insert into moviedata(ID,title,release_date,poster_path,overview) values($1,$2,$3,$4,$5) RETURNING * `;
+let values=[mv.id,mv.title,mv.release_date,mv.poster_path,mv.overview];
 client.query(sql,values).then(movie=>{
+  console.log(movie);
 res.status(200).json(movie);
 }).catch(error=>{
-  serverHandler(err, res, req);
+  serverHandler(error, res, req);
 })
 
 }
@@ -58,10 +62,10 @@ function ApiMovie(id, title, release_date, poster_path, overview) {
 
 
 function tredinFunction(req, res) {
-  console.log(url);
+  //console.log(url);
   axios.get(url)
     .then(result => {
-      console.log(result.data.results);
+     // console.log(result.data.results);
       let movies = result.data.results.map(movie => {
         return new ApiMovie(movie.id, movie.title, movie.release_date, movie.poster_path, movie.overview)
 
@@ -75,14 +79,16 @@ function tredinFunction(req, res) {
 
 
 
+
+
 function searchingFunction(req, res){
 let theSearch=req.query.theSearch;
-  let newUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=${process.env.theSearch}`
+  let newUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=${theSearch}`
 
   axios.get(newUrl)
-  axios.get(url)
+
     .then(result => {
-      console.log(result.data.results);
+     // console.log(result.data.results);
       let movies = result.data.results.map(movie => {
         return new ApiMovie(movie.id, movie.title, movie.release_date, movie.poster_path, movie.overview)
 
