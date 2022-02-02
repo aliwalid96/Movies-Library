@@ -67,6 +67,8 @@ function searchingFunction(req, res){
       serverHandler(err, res, req);
 
 
+      
+
     })
 
 
@@ -75,6 +77,7 @@ function searchingFunction(req, res){
 
 
 
+  
 
 
 function notFoundsHandle(req, res) {
