@@ -31,6 +31,8 @@ function ApiMovie(id, title, release_date, poster_path, overview) {
   this.poster_path = poster_path;
   this.overview = overview;
 
+
+  
 }
 
 
@@ -65,6 +67,8 @@ function searchingFunction(req, res){
       serverHandler(err, res, req);
 
 
+      
+
     })
 
 
@@ -73,6 +77,7 @@ function searchingFunction(req, res){
 
 
 
+  
 
 
 function notFoundsHandle(req, res) {
