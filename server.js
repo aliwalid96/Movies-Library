@@ -1,12 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-
+const pg=require('pg');
+const client=new pg.Client(process.env.DATABASE_URL);
 const app = express();
 require('dotenv').config();
 app.use(cors());
+
+app.use(express.json());
 let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}&language=en-US`;
-let newUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=${process.env.THEMOVIETYPE}`
 
 
 const moviesData = require('./Movie Data/data.json');
@@ -21,7 +23,26 @@ app.get('/favorite', favoritWelcom)
 app.get('/trending', tredinFunction)
 app.get('/search', searchingFunction)
 app.get(serverHandler)
+app.post('/addMovie',addMovieFun)
+//app.get('/getMovies',getMoveFun)
+
 app.get('*', notFoundsHandle);
+
+function addMovieFun(req,res){
+console.log(req.body);
+let sql=`insert into moviedata(title,release_date,poster_path,overview) values($1,$2,$3,$4) `;
+let values=[data.results.title,data.results.release_date,data.results.poster_path,data.results.overview];
+client.query(sql,values).then(movie=>{
+res.status(200).json(movie);
+}).catch(error=>{
+  serverHandler(err, res, req);
+})
+
+}
+
+
+
+
 
 
 function ApiMovie(id, title, release_date, poster_path, overview) {
@@ -32,7 +53,7 @@ function ApiMovie(id, title, release_date, poster_path, overview) {
   this.overview = overview;
 
 
-  
+
 }
 
 
@@ -52,7 +73,12 @@ function tredinFunction(req, res) {
     })
 }
 
+
+
 function searchingFunction(req, res){
+let theSearch=req.query.theSearch;
+  let newUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=${process.env.theSearch}`
+
   axios.get(newUrl)
   axios.get(url)
     .then(result => {
@@ -113,8 +139,10 @@ function MovieHandler(req, res) {
 
 }
 
+client.connect().then(()=>{
+  app.listen(3003, () => {
 
-app.listen(3001, () => {
-
-  console.log('listening to port 3001')
+    console.log('listening to port 3001')
+  })
 })
+
