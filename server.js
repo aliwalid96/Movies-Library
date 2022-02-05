@@ -7,7 +7,7 @@ const app = express();
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
-
+let PORT=`${process.env.PORT}`
 let parser = require('body-parser');
 let jasonParser = parser.json();
 let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}&language=en-US`;
@@ -19,14 +19,9 @@ app.get('/favorite', favoritWelcom)
 app.get('/trending', tredinFunction)
 app.get('/search', searchingFunction)
 app.get(serverHandler)
-app.post('/addMovie', jasonParser, addMovieFun)
+app.post('/addMovie',addMovieFun)
 //app.put('/updatmovie/:id', updateMovie);
-//app.get('/getMovies',getMoveFun)
-
-
-
-
-
+app.get('/getMovies',getMoveFun)
 
 
 app.get('*', notFoundsHandle);
@@ -57,21 +52,22 @@ function updateMovie(req, res) {
 
   });
 
-
-
-
 }
-
+}
 function addMovieFun(req, res) {
   console.log(req.body);
   let mv = req.body;
-  let sql = `insert into moviedata(title,release_date,poster_path,overview) values($1,$2,$3,$4) RETURNING * `;
-  let values = [ mv.title, mv.release_date, mv.poster_path, mv.overview];
+  let sql = `insert into moviesTable(title,release_date,poster_path,overview) values($1,$2,$3,$4);`;
+  let values = [mv.title, mv.release_date, mv.poster_path, mv.overview];
+  console.log(values);
   client.query(sql, values).then(movie => {
     console.log(movie);
+  
     res.status(200).json(movie);
   }).catch(error => {
-    serverHandler(error, res, req);
+    console.log(error);
+   // serverHandler(error, res, req);
+   res.status(500).json(error);
   })
 
 }
@@ -164,5 +160,14 @@ client.connect().then(() => {
 
     console.log('listening to port 3001')
   })
-})
+});
 
+function getMoveFun(req,res){
+  let sql = `SELECT * FROM moviesTable;`;
+  client.query(sql).then(data=>{
+    console.log(data);
+     res.status(200).json(data.rows);
+  }).catch(error=>{
+      serverHandler(error,req,res)
+  });
+}
