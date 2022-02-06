@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+require('dotenv').config();
 const pg = require('pg');
 const client = new pg.Client(process.env.DATABASE_URL);
+
 const app = express();
-require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 let PORT=`${process.env.PORT}`
@@ -19,51 +20,54 @@ app.get('/favorite', favoritWelcom)
 app.get('/trending', tredinFunction)
 app.get('/search', searchingFunction)
 app.get(serverHandler)
-app.post('/addMovie',addMovieFun)
+app.post('/addMovie',jasonParser,addMovieFun)
 //app.put('/updatmovie/:id', updateMovie);
 app.get('/getMovies',getMoveFun)
 
 
 app.get('*', notFoundsHandle);
 
-function deleteMovi(req,res){
-  const id = req.params.id;
-  const sql = `DELETE FROM moviesTable WHERE id=${id};` 
+// function deleteMovi(req,res){
+//   const id = req.params.id;
+//   const sql = `DELETE FROM moviesTable WHERE id=${id};` 
   
 
-  client.query(sql).then(()=>{
-      res.status(200).send("The Movie has been deleted");
-  }).catch(error=>{
-    serverHandler(error,req,res)
-  });
+//   client.query(sql).then(()=>{
+//       res.status(200).send("The Movie has been deleted");
+//   }).catch(error=>{
+//     serverHandler(error,req,res)
+//   });
 
-function updateMovie(req, res) {
-  const id = req.params.id;
-  // console.log(req.params.name);
-  const movie = req.body;
 
-  const sql = `UPDATE moviesTable SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
-  let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
-  client.query(sql, values).then(data => {
-    res.status(200).json(data.rows);
+// }
 
-  }).catch(error => {
-    serverHandler(error, req, res);
+// function updateMovie(req, res) {
+//   const id = req.params.id;
+//   // console.log(req.params.name);
+//   const movie = req.body;
 
-  });
+//   const sql = `UPDATE movies SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
+//   let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
+//   client.query(sql, values).then(data => {
+//     res.status(200).json(data.rows);
 
-}
-}
+//   }).catch(error => {
+//     serverHandler(error, req, res);
+
+//   });
+
+// }
+
 function addMovieFun(req, res) {
-  console.log(req.body);
+  //console.log(req.body);
   let mv = req.body;
-  let sql = `insert into moviesTable(title,release_date,poster_path,overview) values($1,$2,$3,$4);`;
+  let sql = `INSERT INTO movies(title,release_date,poster_path,overview) VALUES($1,$2,$3,$4) RETURNING *;`;
   let values = [mv.title, mv.release_date, mv.poster_path, mv.overview];
   console.log(values);
   client.query(sql, values).then(movie => {
     console.log(movie);
   
-    res.status(200).json(movie);
+    res.status(200).json(movie.rows);
   }).catch(error => {
     console.log(error);
    // serverHandler(error, res, req);
@@ -173,7 +177,7 @@ client.connect().then(() => {
 });
 
 function getMoveFun(req,res){
-  let sql = `SELECT * FROM moviesTable;`;
+  let sql = `SELECT * FROM movies;`;
   client.query(sql).then(data=>{
     console.log(data);
      res.status(200).json(data.rows);

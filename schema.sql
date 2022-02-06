@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS moviesTable;
 
-CREATE TABLE moviesTable
-(
-id serial primary key ,
-title varchar(10000),
-release_date varchar(10000),
-poster_path varchar(10000),
-overview varchar(10000)
+DROP TABLE IF EXISTS movies;
+
+CREATE TABLE IF NOT EXISTS movies (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    release_date VARCHAR(255),
+    poster_path VARCHAR(10000),
+    overview VARCHAR(10000)
 );
