@@ -77,6 +77,7 @@ function addMovieFun(req, res) {
 }
 
 
+
 function ApiMovie(id, title, release_date, poster_path, overview) {
   this.id = id;
   this.title = title;
@@ -84,6 +85,9 @@ function ApiMovie(id, title, release_date, poster_path, overview) {
   this.poster_path = poster_path;
   this.overview = overview;
 }
+
+
+
 
 
 function tredinFunction(req, res) {
