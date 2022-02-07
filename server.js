@@ -4,7 +4,10 @@ const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
 const pg = require('pg');
-const client = new pg.Client(process.env.DATABASE_URL);
+const client = new pg.Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+})
 
 const app = express();
 app.use(cors());
