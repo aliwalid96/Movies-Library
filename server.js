@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -23,6 +24,8 @@ app.get(serverHandler)
 app.post('/addMovie',jasonParser,addMovieFun)
 app.put('/updatmovie/:id', updateMovie);
 app.get('/getMovies',getMoveFun)
+app.get('/getMovies/:id',getMoveFun)
+
 
 
 app.get('*', notFoundsHandle);
@@ -48,6 +51,8 @@ function updateMovie(req, res) {
 
   const sql = `UPDATE movies SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
   let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
+  console.log('req.body',movie);
+  console.log(id);
   client.query(sql, values).then(data => {
     res.status(200).json(data.rows);
 
@@ -63,13 +68,13 @@ function addMovieFun(req, res) {
   let mv = req.body;
   let sql = `INSERT INTO movies(title,release_date,poster_path,overview) VALUES($1,$2,$3,$4) RETURNING *;`;
   let values = [mv.title, mv.release_date, mv.poster_path, mv.overview];
-  console.log(values);
+  //console.log(values);
   client.query(sql, values).then(movie => {
-    console.log(movie);
+   // console.log(movie);
   
     res.status(200).json(movie.rows);
   }).catch(error => {
-    console.log(error);
+   // console.log(error);
    // serverHandler(error, res, req);
    res.status(500).json(error);
   })
@@ -176,20 +181,21 @@ function MovieHandler(req, res) {
 
 }
 
-client.connect().then(() => {
-  app.listen(PORT, () => {
-
-    console.log('listening to port 3001')
-  })
-});
 
 function getMoveFun(req,res){
   let sql = `SELECT * FROM movies;`;
   client.query(sql).then(data=>{
-    console.log(data);
+   // console.log(data);
      res.status(200).json(data.rows);
   }).catch(error=>{
       serverHandler(error,req,res)
   });
 }
 
+
+client.connect().then(() => {
+  app.listen(PORT, () => {
+
+    console.log('listening to port 3001')
+  })
+});
