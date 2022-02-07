@@ -14,49 +14,49 @@ let jasonParser = parser.json();
 let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}&language=en-US`;
 
 const moviesData = require('./MovieData/data.json');
-//app.delete('/deleteMovie/:id',deleteMovi);
+app.delete('/deleteMovie/:id',deleteMovi);
 app.get('/', MovieHandler);
 app.get('/favorite', favoritWelcom)
 app.get('/trending', tredinFunction)
 app.get('/search', searchingFunction)
 app.get(serverHandler)
 app.post('/addMovie',jasonParser,addMovieFun)
-//app.put('/updatmovie/:id', updateMovie);
+app.put('/updatmovie/:id', updateMovie);
 app.get('/getMovies',getMoveFun)
 
 
 app.get('*', notFoundsHandle);
 
-// function deleteMovi(req,res){
-//   const id = req.params.id;
-//   const sql = `DELETE FROM moviesTable WHERE id=${id};` 
+function deleteMovi(req,res){
+  const id = req.params.id;
+  const sql = `DELETE FROM movies WHERE id=${id};` 
   
 
-//   client.query(sql).then(()=>{
-//       res.status(200).send("The Movie has been deleted");
-//   }).catch(error=>{
-//     serverHandler(error,req,res)
-//   });
+  client.query(sql).then(()=>{
+      res.status(200).send("The Movie has been deleted");
+  }).catch(error=>{
+    serverHandler(error,req,res)
+  });
 
 
-// }
+}
 
-// function updateMovie(req, res) {
-//   const id = req.params.id;
-//   // console.log(req.params.name);
-//   const movie = req.body;
+function updateMovie(req, res) {
+  const id = req.params.id;
+  // console.log(req.params.name);
+  const movie = req.body;
 
-//   const sql = `UPDATE movies SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
-//   let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
-//   client.query(sql, values).then(data => {
-//     res.status(200).json(data.rows);
+  const sql = `UPDATE movies SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`;
+  let values = [movie.title, movie.release_date, movie.poster_path, movie.overview, id];
+  client.query(sql, values).then(data => {
+    res.status(200).json(data.rows);
 
-//   }).catch(error => {
-//     serverHandler(error, req, res);
+  }).catch(error => {
+    serverHandler(error, req, res);
 
-//   });
+  });
 
-// }
+}
 
 function addMovieFun(req, res) {
   //console.log(req.body);
@@ -177,7 +177,7 @@ function MovieHandler(req, res) {
 }
 
 client.connect().then(() => {
-  app.listen(3003, () => {
+  app.listen(PORT, () => {
 
     console.log('listening to port 3001')
   })
@@ -192,3 +192,4 @@ function getMoveFun(req,res){
       serverHandler(error,req,res)
   });
 }
+
