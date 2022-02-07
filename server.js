@@ -8,6 +8,10 @@ const client = new pg.Client({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 })
+//heroku pg:psql -f schema.sql --app movielibrary-ali
+
+
+
 
 const app = express();
 app.use(cors());
@@ -27,7 +31,9 @@ app.get(serverHandler)
 app.post('/addMovie',jasonParser,addMovieFun)
 app.put('/updatmovie/:id', updateMovie);
 app.get('/getMovies',getMoveFun)
-app.get('/getMovies/:id',getMoveFun)
+app.get('/getOneMovies/:id',getOneMoveFun)
+
+
 
 
 
@@ -186,7 +192,7 @@ function MovieHandler(req, res) {
 
 
 function getMoveFun(req,res){
-  let sql = `SELECT * FROM movies;`;
+  let sql = `SELECT * FROM movies wher;`;
   client.query(sql).then(data=>{
    // console.log(data);
      res.status(200).json(data.rows);
@@ -195,6 +201,15 @@ function getMoveFun(req,res){
   });
 }
 
+function getOneMoveFun(req,res){
+  let sql = `SELECT * FROM movies WHERER id =${req.params.id};`;
+  client.query(sql).then(data=>{
+   // console.log(data);
+     res.status(200).json(data.rows);
+  }).catch(error=>{
+      serverHandler(error,req,res)
+  });
+}
 
 client.connect().then(() => {
   app.listen(PORT, () => {
